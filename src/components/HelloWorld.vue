@@ -35,21 +35,29 @@
       </v-flex>
     </v-layout>
     <v-layout align-center justify-space-around row fill-height />
-    <div class="wrapper">
-      <div v-for="(cliente,conta) in searchUser" class="box">
-        <img id="foto" v-bind:src="cliente.picture.large">
-        <h4 v-if="checked1"> Nombre: {{cliente.name.first}}, {{cliente.name.last}} </h4>
-        <h5 v-if="checked2">Sexo: {{cliente.gender}} </h5>
-        <h5 v-if="checked3"> Locacion: {{cliente.location.city}}</h5>
-        <h5 v-if="checked4">Telefono: {{cliente.phone}}</h5>
-        <h5 v-if="checked5">Celular: {{cliente.cell}}</h5>
-        <h5 v-if="checked6">Correo: {{cliente.email}}</h5>
-        <v-btn v-on:click="aceptarCliente(conta)"> Aceptado </v-btn>
+    <div class="container">
+      <div v-for="(cliente,conta) in searchUser" class="item">
+        <v-img :src="cliente.picture.large" aspect-ratio="1" ></v-img>
+        <h4 v-if="checked1">Nombre: {{cliente.name.first}}, {{cliente.name.last}} </h4>
+        <h4 v-if="checked2">Sexo: {{cliente.gender}} </h4>
+        <h4 v-if="checked3">Locacion: {{cliente.location.city}}</h4>
+        <h4 v-if="checked4">Telefono: {{cliente.phone}}</h4>
+        <h4 v-if="checked5">Celular: {{cliente.cell}}</h4>
+        <h4 v-if="checked6">Correo: {{cliente.email}}</h4>
+        <v-btn v-on:click="aceptarCliente(conta)">Aceptado</v-btn>
         <v-btn v-on:click="rechazarCliente(conta)">Rechazado</v-btn>
       </div>
+      
     </div>
-    </v-layout>
-  </v-container>
+    <v-footer dark inset app color="indigo">
+      <v-layout v-model="aceptado">
+        <span>Aceptado: {{aceptado}} </span>
+      </v-layout>
+      <v-layout v-model="rechazado">
+        <span> Rechazado: {{rechazado}}</span>
+      </v-layout>
+    </v-footer>
+  </v-container>  
 
 </template>
 <script>
@@ -57,6 +65,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      bottomNav: 3,
       select: 5,
       items: [5, 10, 15],
       clientes: [],
@@ -67,7 +76,9 @@ export default {
       checked4: true,
       checked5: true,
       checked6: true,
-      search: ""
+      search: "",
+      aceptado: 0,
+      rechazado: 0
     };
   },
   created() {
@@ -85,23 +96,22 @@ export default {
           this.clientes = response.data.results;
         });
     },
-    aceptarCliente: posicion => {
+    aceptarCliente(posicion) {
       //aceptado++;
 
       this.aceptado++;
       this.clientes.splice(posicion, 1);
-      //alert("cliente: "+ posicion);
     },
 
-    rechazarCliente: posicion => {
+    rechazarCliente(posicion) {
       this.rechazado++;
       this.clientes.splice(posicion, 1);
     }
   },
   computed: {
     searchUser: function() {
-      return this.clientes.filter((cliente) => {
-         return cliente.name.first.match(this.search);
+      return this.clientes.filter(cliente => {
+        return cliente.name.first.match(this.search);
       });
     }
   }
@@ -109,17 +119,19 @@ export default {
 </script>
 
 <style>
-.wrapper {
-  display: grid;
-  grid-template-columns: 300px 300px 300px;
-  grid-gap: 40px;
+.container {
+  min-height: 400px;
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
 }
 
-.box {
-  background-color: #444;
-  color: #fff;
-  border-radius: 5px;
-  padding: 20px;
-  font-size: 150%;
+.item {
+  flex: 0 0 auto;
+  margin: 10px;
 }
 </style>
